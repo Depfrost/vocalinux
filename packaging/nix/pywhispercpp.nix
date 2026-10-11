@@ -52,10 +52,9 @@ buildPythonPackage rec {
   env = {
     # The sdist ships no version.txt; setup.py falls back to this env var.
     PYWHISPERCPP_VERSION = version;
-    # Build a portable static extension with Vulkan acceleration enabled.
-    # Vulkan is the cross-vendor backend; the host still needs a working
-    # Vulkan ICD/driver at runtime for GPU inference.
-    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON";
+    # Build Vulkan as a shared backend: Vocalinux's GPU detector looks for
+    # libggml-vulkan.so. The host still needs a working Vulkan ICD/driver.
+    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=ON -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON";
   };
 
   # env attrs are exported verbatim; expanding the core count needs a shell
