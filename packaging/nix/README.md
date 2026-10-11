@@ -1,6 +1,6 @@
 # Vocalinux for Nix
 
-A flake that builds Vocalinux against nixpkgs: GTK 3, PyGObject and the
+A flake that builds Vocalinux against nixpkgs: GTK, PyGObject and the
 AppIndicator typelib come from nixpkgs, and `pywhispercpp` — which nixpkgs
 does not package — is built from its PyPI sdist (it vendors whisper.cpp and
 pybind11). Every host tool the app probes for (`xdotool`, `wtype`, `ydotool`,
@@ -19,6 +19,16 @@ or install into a profile:
 ```bash
 nix profile install github:VocaHQ/vocalinux
 ```
+
+## GPU acceleration
+
+The Nix `pywhispercpp` derivation enables the whisper.cpp Vulkan backend at
+build time. Vulkan is intended to support GPUs from multiple vendors, including
+NVIDIA cards such as the GTX 1650, without requiring a CUDA-specific build.
+Actual GPU inference still depends on a compatible Vulkan driver/ICD being
+available on the host; otherwise the application can continue to use CPU
+inference. The derivation has not yet been validated on every supported NixOS
+GPU/driver combination.
 
 ## NixOS
 
