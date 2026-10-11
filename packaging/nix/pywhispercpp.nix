@@ -9,6 +9,9 @@
   setuptools,
   wheel,
   cmake,
+  shaderc,
+  vulkan-headers,
+  vulkan-loader,
   numpy,
   requests,
   tqdm,
@@ -48,10 +51,10 @@ buildPythonPackage rec {
   env = {
     # The sdist ships no version.txt; setup.py falls back to this env var.
     PYWHISPERCPP_VERSION = version;
-    # One static extension module (BUILD_SHARED_LIBS defaults ON upstream and
-    # would need $ORIGIN rpath repair that never runs outside cibuildwheel) and
-    # a portable baseline instead of -march=native.
-    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON";
+    # Build a portable static extension with Vulkan acceleration enabled.
+    # Vulkan is the cross-vendor backend; the host still needs a working
+    # Vulkan ICD/driver at runtime for GPU inference.
+    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON";
   };
 
   # env attrs are exported verbatim; expanding the core count needs a shell
@@ -67,6 +70,7 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     cmake
+    shaderc # provides glslc, used to compile whisper.cpp's Vulkan shaders
     autoPatchelfHook
   ];
 
@@ -75,8 +79,12 @@ buildPythonPackage rec {
     wheel
   ];
 
-  # libstdc++/libgomp for the compiled extension.
-  buildInputs = [ stdenv.cc.cc.lib ];
+  # libstdc++/libgomp plus Vulkan headers and loader for the native backend.
+  buildInputs = [
+    stdenv.cc.cc.lib
+    vulkan-headers
+    vulkan-loader
+  ];
 
   dependencies = [
     numpy
