@@ -53,8 +53,9 @@ buildPythonPackage rec {
     # The sdist ships no version.txt; setup.py falls back to this env var.
     PYWHISPERCPP_VERSION = version;
     # Build Vulkan as a shared backend: Vocalinux's GPU detector looks for
-    # libggml-vulkan.so. The host still needs a working Vulkan ICD/driver.
-    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=ON -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON";
+    # libggml-vulkan.so. CMake's build-tree RPATH can leak /build into the
+    # wheel; disable CMake RPATHs and let autoPatchelfHook set Nix runtime paths.
+    CMAKE_ARGS = "-DBUILD_SHARED_LIBS=ON -DGGML_NATIVE=OFF -DGGML_VULKAN=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_SKIP_RPATH=ON";
   };
 
   # env attrs are exported verbatim; expanding the core count needs a shell
