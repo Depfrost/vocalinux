@@ -20,15 +20,6 @@ or install into a profile:
 nix profile install github:VocaHQ/vocalinux
 ```
 
-## GPU acceleration
-
-The Nix `pywhispercpp` derivation enables the whisper.cpp Vulkan backend at
-build time. Vulkan is intended to support GPUs from multiple vendors, including
-NVIDIA cards such as the GTX 1650, without requiring a CUDA-specific build.
-Actual GPU inference still depends on a compatible Vulkan driver/ICD being
-available on the host; otherwise the application can continue to use CPU
-inference. The derivation has not yet been validated on every supported NixOS
-GPU/driver combination.
 
 ## NixOS
 
