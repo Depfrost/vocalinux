@@ -10,6 +10,7 @@
   wheel,
   cmake,
   shaderc,
+  spirv-headers,
   vulkan-headers,
   vulkan-loader,
   numpy,
@@ -79,9 +80,11 @@ buildPythonPackage rec {
     wheel
   ];
 
-  # libstdc++/libgomp plus Vulkan headers and loader for the native backend.
+  # CMake's Vulkan backend calls find_package(SPIRV-Headers CONFIG REQUIRED),
+  # so expose the package configuration as well as the Vulkan headers/loader.
   buildInputs = [
     stdenv.cc.cc.lib
+    spirv-headers
     vulkan-headers
     vulkan-loader
   ];
